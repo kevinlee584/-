@@ -1,0 +1,251 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>Bubble Chart</title>
+	<script src="Chart.js-master/Chart.min.js"></script>
+	<script src="Chart.js-master/samples/utils.js"></script>
+	<script src="mathmethod.js"></script>
+	<style type="text/css">
+		table {
+			background-color: white;
+			table-layout: fixed;
+			word-break: break-all;
+		}
+		table.a {
+			height: 500px;
+			width: 1000px;
+			display: inline;
+		}
+	</style>
+</head>
+
+<body>
+	<h1 align="center">例題</h1>
+	<table align="center">
+		<tr>
+			<td align="center">非等間距</td>
+			<td align="center">等間距</td>
+		</tr>
+		<tr>
+			<td>
+				<table border="1" class=a;>
+					<tr>
+						<td colspan="2"><canvas id="point"></canvas></td>
+					</tr>
+					<tr>
+						<td><canvas id="Lagrange_canvas"></canvas></td>
+						<td><canvas id="Newton_canvas"></canvas></td>
+					</tr>
+					<tr>
+						<td><canvas id="Forward_canvas"></canvas></td>
+						<td><canvas id="Backward_canvas"></canvas></td>
+				　	</tr>
+				</table>
+			</td>
+			<td>
+				<table border="1" class=a;>
+					<tr>
+						<td colspan="2"><canvas id="point_A"></canvas></td>
+					</tr>
+					<tr>
+						<td><canvas id="Lagrange_canvas_A"></canvas></td>
+						<td><canvas id="Newton_canvas_A"></canvas></td>
+					</tr>
+					<tr>
+						<td><canvas id="Forward_canvas_A"></canvas></td>
+						<td><canvas id="Backward_canvas_A"></canvas></td>
+				　	</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<h1 align="center">自選題</h1>
+	<table align="center">
+		<tr>
+			<td align="center">非等間距</td>
+			<td align="center">等間距</td>
+		</tr>
+		<tr>
+			<td align="center">sin(x * 10)</td>
+			<td align="center">log(x) + x^cos(x) - 10</td>
+		</tr>
+		<tr>
+			<td>
+				<table border="1" class=a;>
+					<tr>
+						<td colspan="2"><canvas id="point_B"></canvas></td>
+					</tr>
+					<tr>
+						<td><canvas id="Lagrange_canvas_B"></canvas></td>
+						<td><canvas id="Newton_canvas_B"></canvas></td>
+					</tr>
+					<tr>
+						<td><canvas id="Forward_canvas_B"></canvas></td>
+						<td><canvas id="Backward_canvas_B"></canvas></td>
+				　	</tr>
+				</table>
+			</td>
+			<td>
+				<table border="1" class=a;>
+					<tr>
+						<td colspan="2"><canvas id="point_C"></canvas></td>
+					</tr>
+					<tr>
+						<td><canvas id="Lagrange_canvas_C"></canvas></td>
+						<td><canvas id="Newton_canvas_C"></canvas></td>
+					</tr>
+					<tr>
+						<td><canvas id="Forward_canvas_C"></canvas></td>
+						<td><canvas id="Backward_canvas_C"></canvas></td>
+				　	</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+
+
+
+ 
+	<script>
+		const XYdata = [
+			{x:2.40, y:-2.5065},
+			{x:2.75, y:-1.4261},
+			{x:2.91, y:0.6374},
+			{x:3.33, y:1.9569},
+			{x:3.89, y:-1.2967},
+			{x:3.94, y:0.0134},
+			{x:4.42, y:-1.7892},
+			{x:4.65, y:-3.6020},
+			{x:4.87, y:4.0695},
+			{x:5.00, y:4.1644},
+			{x:5.33, y:-4.6471},
+			{x:5.96, y:-4.5018},
+			{x:6.14, y:5.5824},
+			{x:6.53, y:-3.6274},
+			{x:6.85, y:-1.5766},
+			{x:7.14, y:5.3962},
+			{x:7.35, y:-3.8348},
+			{x:7.67, y:7.2730},
+			{x:7.70, y:5.6132},
+			{x:8.10, y:7.4893}
+
+		]; 
+
+		const XYdata_A = [
+			{x:2.4, y:-2.5065},
+			{x:2.7, y:-1.9135},
+			{x:3.0, y:  1.8316},
+			{x:3.3, y:  2.3425},
+			{x:3.6, y:-2.9735},
+			{x:3.9, y:-1.0456},
+			{x:4.2, y:  3.9669},
+			{x:4.5, y:-3.9166},
+			{x:4.8, y:  1.8038},
+			{x:5.1, y:  0.3963},
+			{x:5.4, y:-1.9792},
+			{x:5.7, y:  2.6447},
+			{x:6.0, y:-2.4312},
+			{x:6.3, y:  1.0453},
+			{x:6.6, y:  1.6986},
+			{x:6.9, y:-5.2736},
+			{x:7.2, y:  7.1707},
+			{x:7.5, y:-3.6987},
+			{x:7.8, y:-4.6149},
+			{x:8.1, y:  7.4893},
+		];
+
+		const XYdata_BB = [
+			1.5, 1.7, 2.0, 2.1, 2.45, 3.351, 3.597, 4.6143, 5.726, 5.924, 6.9888, 6.271, 6.354, 7.759, 8.3545, 8.889, 9.111,  
+		]
+
+		function calculatorA(x) {
+			return Math.sin(x * 10); 
+		}
+		function calculatorB(x) {
+			return Math.log10(x) + Math.pow(x, Math.cos(x)) - 10; 
+		}
+
+
+		window.onload = function() {
+			const x_points = []; 
+			for(let i = 2.5; i < 7.5; i+=0.001) x_points.push(i);
+
+			XYdata_B = XYdata_BB.map(x=> {return {x:x, y:calculatorA(x)}});
+			XYdata_C = XYdata_A.map(m => {return {x:m.x, y:calculatorB(m.x)}});
+			console.log(XYdata_C);
+
+			var name = ["Lagrange_canvas", "Newton_canvas", "Forward_canvas", "Backward_canvas", "point"];
+			var name_A = name.map(n => {return n + "_A"; });
+			var name_B = name.map(n => {return n + "_B"; });
+			var name_C = name.map(n => {return n + "_C"; });
+
+
+			var ctx = name.map(x => {return document.getElementById(x).getContext('2d');});
+			var ctx_A = name_A.map(x => {return document.getElementById(x).getContext('2d');});
+			var ctx_B = name_B.map(x => {return document.getElementById(x).getContext('2d');});
+			var ctx_C = name_C.map(x => {return document.getElementById(x).getContext('2d');});
+
+			var gen = new DataGenerator(XYdata);
+			var gen_A = new DataGenerator(XYdata_A);
+			var gen_B = new DataGenerator(XYdata_B, calculatorA);
+			var gen_C = new DataGenerator(XYdata_C, calculatorB);
+
+			var colorHelper = Chart.helpers.color;
+			const modle = function(name, color, point, rad, G) {
+				return {
+					type: 'scatter',
+					data: {
+					    datasets: [{
+					       	data: G.Gen(name, point),
+					        label: name,
+					        borderColor: color,
+					        backgroundColor: colorHelper(color).alpha(0.7).rgbString(),
+					        radius: rad, 
+					    }]
+					},
+					options: {
+						responsive: true,
+						tooltips: {
+							mode: 'point'
+						}
+					}
+				}
+			}
+			
+			window.myChart = new Chart(ctx[0], modle("Lagrange", window.chartColors.red, x_points, 0.1, gen));
+			window.myChartA = new Chart(ctx[1], modle("Newton", window.chartColors.blue, x_points, 0.1, gen));
+			window.myChartB = new Chart(ctx[2], modle("Forward", window.chartColors.green, x_points, 0.1, gen));
+			window.myChartC = new Chart(ctx[3], modle("Backward", window.chartColors.yellow, x_points, 0.1, gen));
+			window.myChartD = new Chart(ctx[4], modle("Data", window.chartColors.purple, XYdata.map(m => m.x), 5, gen));
+
+			window.myChartE = new Chart(ctx_A[0], modle("Lagrange", window.chartColors.red, x_points, 0.1, gen_A));
+			window.myChartF = new Chart(ctx_A[1], modle("Newton", window.chartColors.blue, x_points, 0.1, gen_A));
+			window.myChartG = new Chart(ctx_A[2], modle("Forward", window.chartColors.green, x_points, 0.1, gen_A));
+			window.myChartH = new Chart(ctx_A[3], modle("Backward", window.chartColors.yellow, x_points, 0.1, gen_A));
+			window.myChartI = new Chart(ctx_A[4], modle("Data", window.chartColors.purple, XYdata_A.map(m => m.x), 5, gen_A));
+
+			
+			window.myChartJ = new Chart(ctx_B[0], modle("Lagrange", window.chartColors.red, x_points, 0.1, gen_B));
+			window.myChartK = new Chart(ctx_B[1], modle("Newton", window.chartColors.blue, x_points, 0.1, gen_B));
+			window.myChartL = new Chart(ctx_B[2], modle("Forward", window.chartColors.green, x_points, 0.1, gen_B));
+			window.myChartM = new Chart(ctx_B[3], modle("Backward", window.chartColors.yellow, x_points, 0.1, gen_B));
+			window.myChartN = new Chart(ctx_B[4], modle("Data", window.chartColors.purple, x_points, 0.1, gen_B));
+
+			window.myChartO = new Chart(ctx_C[0], modle("Lagrange", window.chartColors.red, x_points, 0.1, gen_C));
+			window.myChartP = new Chart(ctx_C[1], modle("Newton", window.chartColors.blue, x_points, 0.1, gen_C));
+			window.myChartQ = new Chart(ctx_C[2], modle("Forward", window.chartColors.green, x_points, 0.1, gen_C));
+			window.myChartR = new Chart(ctx_C[3], modle("Backward", window.chartColors.yellow, x_points, 0.1, gen_C));
+			window.myChartS = new Chart(ctx_C[4], modle("Data", window.chartColors.purple, x_points, 0.1, gen_C));
+			
+		}
+		
+
+
+		
+	</script>
+</body>
+
+</html>
